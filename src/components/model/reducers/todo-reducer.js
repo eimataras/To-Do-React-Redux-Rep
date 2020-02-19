@@ -65,8 +65,7 @@ const todoReducer = (state = cloneDeep(initialState.todo), action) =>{
             return Object.assign({}, {
                 isFetching: false,
                 error: undefined,
-                //neveikia----------------------------------------
-                data: state.data.filter(todo => { return [todo.id !== action.payload]})
+                data: [...state.data.filter(todo => { return todo.id !== action.payload})]
             })
         }
         case DELETE_ONE_TODO_FAILURE: {

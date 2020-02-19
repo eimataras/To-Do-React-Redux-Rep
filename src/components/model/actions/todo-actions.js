@@ -65,18 +65,17 @@ export const addTodo = (irasas) => {
 }
 
 export const deleteTodo = (key) => {
-    console.log('atejau iki action delete '+key)
+    console.log('atejau iki action delete ' + key)
     return (dispatch) => {
         dispatch(requestDeleteTodo());
-        fetch('http://localhost:8080/todo/delete?id='+key, {
+        fetch('http://localhost:8080/todo/delete?id=' + key, {
             method: 'delete',
             body: JSON.stringify(key),
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
         })
-            .then(response => response)
-            .then(id => dispatch(deleteOneTodo(id)))
+            .then(() => dispatch(deleteOneTodo(key)))
             .catch((error) => {
                 dispatch(deleteOneTodoFailure(error))
             })
