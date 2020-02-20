@@ -2,26 +2,26 @@ export const REQUEST_TODO_LIST = 'REQUEST_TODO_LIST';
 export const RECEIVE_TODO_LIST = 'RECEIVE_TODO_LIST';
 export const RECEIVE_TODO_LIST_FAILURE = 'RECEIVE_TODO_LIST_FAILURE';
 
-export const REQUEST_POST_TODO = 'REQUEST_POST_TODO';
-export const ADD_NEW_TODO = 'ADD_NEW_TODO';
-export const ADD_NEW_TODO_FAILURE = 'ADD_NEW_TODO_FAILURE';
+export const REQUEST_ADD_TODO = 'REQUEST_ADD_TODO';
+export const RECEIVE_ADD_TODO = 'RECEIVE_ADD_TODO';
+export const RECEIVE_ADD_TODO_FAILURE = 'RECEIVE_ADD_TODO_FAILURE';
 
 export const REQUEST_DELETE_TODO = 'REQUEST_DELETE_TODO';
-export const DELETE_ONE_TODO = 'DELETE_ONE_TODO';
-export const DELETE_ONE_TODO_FAILURE = 'DELETE_ONE_TODO_FAILURE';
+export const RECEIVE_DELETE_TODO = 'RECEIVE_DELETE_TODO';
+export const RECEIVE_DELETE_TODO_FAILURE = 'RECEIVE_DELETE_TODO_FAILURE';
 
 
 export const requestTodoList = () => ({type: REQUEST_TODO_LIST,});
 export const receiveTodoList = (json) => ({type: RECEIVE_TODO_LIST, payload: json});
 export const receiveTodoListFailure = (error) => ({type: RECEIVE_TODO_LIST_FAILURE, payload: error});
 
-export const requestPostTodo = () => ({type: REQUEST_POST_TODO,});
-export const addNewTodo = (irasas) => ({type: ADD_NEW_TODO, payload: irasas});
-export const addNewTodoFailure = (error) => ({type: ADD_NEW_TODO_FAILURE, payload: error});
+export const requestAddTodo = () => ({type: REQUEST_ADD_TODO,});
+export const receiveAddTodo = (irasas) => ({type: RECEIVE_ADD_TODO, payload: irasas});
+export const receiveAddTodoFailure = (error) => ({type: RECEIVE_ADD_TODO_FAILURE, payload: error});
 
 export const requestDeleteTodo = () => ({type: REQUEST_DELETE_TODO,});
-export const deleteOneTodo = (id) => ({type: DELETE_ONE_TODO, payload: id});
-export const deleteOneTodoFailure = (error) => ({type: DELETE_ONE_TODO_FAILURE, payload: error});
+export const receiveDeleteTodo = (id) => ({type: RECEIVE_DELETE_TODO, payload: id});
+export const receiveDeleteTodoFailure = (error) => ({type: RECEIVE_DELETE_TODO_FAILURE, payload: error});
 
 
 export const fetchTodo = () => {
@@ -37,14 +37,13 @@ export const fetchTodo = () => {
                 dispatch(receiveTodoListFailure(error));
             })
     }
-
 };
 
 export const addTodo = (irasas) => {
     console.log('atejau iki action add')
     return (dispatch) => {
 
-        dispatch(requestPostTodo());
+        dispatch(requestAddTodo());
         fetch('http://localhost:8080/todo/add', {
             method: 'post',
             headers: {
@@ -55,11 +54,13 @@ export const addTodo = (irasas) => {
                 label: irasas,
             })
         })
-            .then(() => {
-                dispatch(addNewTodo(irasas));
+            .then((result) => {
+                result.json().then((json) => {
+                    dispatch(receiveAddTodo(json));
+                })
             })
             .catch((error) => {
-                dispatch(addNewTodoFailure(error))
+                dispatch(receiveAddTodoFailure(error));
             })
     }
 }
@@ -75,9 +76,14 @@ export const deleteTodo = (key) => {
                 'Content-Type': 'application/json',
             }),
         })
-            .then(() => dispatch(deleteOneTodo(key)))
+            .then((result) => {
+                result.json().then((json) => {
+                    dispatch(receiveDeleteTodo(json.id));
+                })
+
+            })
             .catch((error) => {
-                dispatch(deleteOneTodoFailure(error))
+                dispatch(receiveDeleteTodoFailure(error));
             })
     }
 }

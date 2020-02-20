@@ -16,11 +16,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
     },
     dispatch)
 
-// ,
-// ({
-// istrinkIrasa: () => deleteTodo(),
-// }, dispatch)
-
 
 class App extends React.Component {
 
@@ -53,10 +48,8 @@ class App extends React.Component {
 
     render() {
 
-
         if (this.props.todo.isFetching) {
             return (<h1>Dabar kraunu</h1>);
-
         }
 
         const items = this.props.todo.data;
@@ -83,7 +76,7 @@ class App extends React.Component {
                             }</ul>
                             <form onSubmit={this.handleSubmit}>
                                 <label>Add new todo: </label>
-                                <input type="text" onChange={this.handleChange} value={this.state.label}/>
+                                <input type="text" onChange={this.handleChange} value={this.state.label} autoFocus/>
                             </form>
                         </header>
 
