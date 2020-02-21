@@ -4,7 +4,7 @@ import './App.css';
 import {connect} from "react-redux";
 import {bindActionCreators, compose} from "redux";
 import {Route, Switch, withRouter} from "react-router-dom";
-import {addTodo, deleteTodo, fetchTodo} from "../model/actions/todo-actions";
+import {addTodo, deleteTodo, fetchTodo, updateTodo} from "../model/actions/todo-actions";
 
 const mapStateToProps = (state) => {
     return {todo: state.todo};
@@ -12,16 +12,18 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
         kraukSarasa: () => fetchTodo(),
         papildykSarasa: (irasas) => addTodo(irasas),
-        istrinkIrasa: (key) => deleteTodo(key)
+        istrinkIrasa: (key) => deleteTodo(key),
+        atnaujinkIrasa: (irasas) => updateTodo(irasas)
     },
-    dispatch)
+    dispatch);
 
 
 class App extends React.Component {
 
-    state = {
-        label: ''
-    }
+    state =
+        {
+            label: '',
+        };
 
 
     componentDidMount() {
@@ -33,7 +35,7 @@ class App extends React.Component {
         this.setState({
             label: e.target.value
         })
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -41,9 +43,20 @@ class App extends React.Component {
         this.setState({
             label: ''
         })
+    };
 
+    handleChange2 = (item) => {
+        // item.preventDefault();
+        console.log('Sekancioj eilutej sedi siunciamas item')
+        console.log(item);
+        const irasas = {
+            id: item.id,
+            label: item.label,
+            isDone: !item.isDone
+        };
+        this.props.atnaujinkIrasa(irasas);
 
-    }
+    };
 
 
     render() {
@@ -68,12 +81,30 @@ class App extends React.Component {
                             <ul>{
                                 items.map((item) => {
                                         return (
-                                            <li key={item.id}>{item.label} <span></span>
-                                                <button onClick={() => {this.props.istrinkIrasa(item.id)}}>Istrinti</button>
+                                            <li key={item.id}>
+
+                                                {item.label}
+
+                                                <button onClick={() => {
+                                                    this.props.istrinkIrasa(item.id)
+                                                }}>Istrinti
+                                                </button>
+
+
+                                                <form>
+                                                    <label>Is it done?</label>
+                                                    <input type="checkbox"
+                                                           onChange={() => {
+                                                               this.handleChange2(item)
+                                                           }}
+                                                           checked={item.isDone}
+                                                    />
+                                                </form>
                                             </li>);
                                     }
                                 )
-                            }</ul>
+                            }
+                            </ul>
                             <form onSubmit={this.handleSubmit}>
                                 <label>Add new todo: </label>
                                 <input type="text" onChange={this.handleChange} value={this.state.label} autoFocus/>

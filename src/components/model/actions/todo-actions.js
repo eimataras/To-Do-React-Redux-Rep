@@ -10,6 +10,10 @@ export const REQUEST_DELETE_TODO = 'REQUEST_DELETE_TODO';
 export const RECEIVE_DELETE_TODO = 'RECEIVE_DELETE_TODO';
 export const RECEIVE_DELETE_TODO_FAILURE = 'RECEIVE_DELETE_TODO_FAILURE';
 
+export const REQUEST_UPDATE_TODO = 'REQUEST_UPDATE_TODO';
+export const RECEIVE_UPDATE_TODO = 'RECEIVE_UPDATE_TODO';
+export const RECEIVE_UPDATE_TODO_FAILURE = 'RECEIVE_UPDATE_TODO_FAILURE';
+
 
 export const requestTodoList = () => ({type: REQUEST_TODO_LIST,});
 export const receiveTodoList = (json) => ({type: RECEIVE_TODO_LIST, payload: json});
@@ -22,6 +26,10 @@ export const receiveAddTodoFailure = (error) => ({type: RECEIVE_ADD_TODO_FAILURE
 export const requestDeleteTodo = () => ({type: REQUEST_DELETE_TODO,});
 export const receiveDeleteTodo = (id) => ({type: RECEIVE_DELETE_TODO, payload: id});
 export const receiveDeleteTodoFailure = (error) => ({type: RECEIVE_DELETE_TODO_FAILURE, payload: error});
+
+export const requestUpdateTodo = () => ({type: REQUEST_UPDATE_TODO,});
+export const receiveUpdateTodo = (irasas) => ({type: RECEIVE_UPDATE_TODO, payload: irasas});
+export const receiveUpdateTodoFailure = (error) => ({type: RECEIVE_UPDATE_TODO_FAILURE, payload: error});
 
 
 export const fetchTodo = () => {
@@ -40,7 +48,7 @@ export const fetchTodo = () => {
 };
 
 export const addTodo = (irasas) => {
-    console.log('atejau iki action add')
+    console.log('atejau iki action add ' + irasas)
     return (dispatch) => {
 
         dispatch(requestAddTodo());
@@ -63,7 +71,7 @@ export const addTodo = (irasas) => {
                 dispatch(receiveAddTodoFailure(error));
             })
     }
-}
+};
 
 export const deleteTodo = (key) => {
     console.log('atejau iki action delete ' + key)
@@ -86,4 +94,32 @@ export const deleteTodo = (key) => {
                 dispatch(receiveDeleteTodoFailure(error));
             })
     }
-}
+};
+
+export const updateTodo = (irasas) => {
+    console.log('atejau i action update '+ irasas)
+    return (dispatch) => {
+
+        dispatch(requestUpdateTodo());
+        fetch('http://localhost:8080/todo/edit', {
+            method: 'put',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: irasas.id,
+                label: irasas.label,
+                isDone: irasas.isDone
+            })
+        })
+            .then((result) => {
+                result.json().then((json) => {
+                    dispatch(receiveUpdateTodo(json));
+                })
+            })
+            .catch((error) => {
+                dispatch(receiveUpdateTodoFailure(error));
+            })
+    }
+};

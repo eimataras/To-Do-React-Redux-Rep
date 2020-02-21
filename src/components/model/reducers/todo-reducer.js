@@ -1,9 +1,22 @@
 import initialState from "../intial-state";
 import {cloneDeep} from "lodash";
-import {RECEIVE_TODO_LIST, RECEIVE_TODO_LIST_FAILURE, REQUEST_TODO_LIST, REQUEST_ADD_TODO, RECEIVE_ADD_TODO, RECEIVE_ADD_TODO_FAILURE, REQUEST_DELETE_TODO, RECEIVE_DELETE_TODO, RECEIVE_DELETE_TODO_FAILURE} from "../actions/todo-actions";
+import {
+    RECEIVE_ADD_TODO,
+    RECEIVE_ADD_TODO_FAILURE,
+    RECEIVE_DELETE_TODO,
+    RECEIVE_DELETE_TODO_FAILURE,
+    RECEIVE_TODO_LIST,
+    RECEIVE_TODO_LIST_FAILURE,
+    RECEIVE_UPDATE_TODO,
+    RECEIVE_UPDATE_TODO_FAILURE,
+    REQUEST_ADD_TODO,
+    REQUEST_DELETE_TODO,
+    REQUEST_TODO_LIST,
+    REQUEST_UPDATE_TODO
+} from "../actions/todo-actions";
 
-const todoReducer = (state = cloneDeep(initialState.todo), action) =>{
-    switch(action.type){
+const todoReducer = (state = cloneDeep(initialState.todo), action) => {
+    switch (action.type) {
 
         //-----------GET TO-DO LIST FROM  INTERNET -------
         case REQUEST_TODO_LIST: {
@@ -37,7 +50,7 @@ const todoReducer = (state = cloneDeep(initialState.todo), action) =>{
             })
         }
         case RECEIVE_ADD_TODO: {
-            console.log('atejau i reduceri add '+action.payload)
+            console.log('atejau i reduceri add ' + action.payload)
             return Object.assign({}, {
                 isFetching: false,
                 error: undefined,
@@ -61,12 +74,14 @@ const todoReducer = (state = cloneDeep(initialState.todo), action) =>{
             })
         }
         case RECEIVE_DELETE_TODO: {
-            console.log('atejau i reduceri delete '+action.payload);
+            console.log('atejau i reduceri delete ' + action.payload);
             console.log(state.data)
             return Object.assign({}, {
                 isFetching: false,
                 error: undefined,
-                data: [...state.data.filter(todo => { return todo.id !== action.payload})]
+                data: [...state.data.filter(todo => {
+                    return todo.id !== action.payload
+                })]
             })
         }
         case RECEIVE_DELETE_TODO_FAILURE: {
@@ -76,6 +91,32 @@ const todoReducer = (state = cloneDeep(initialState.todo), action) =>{
                 error: action.payload,
             })
         }
+
+        //-----------UPDATE TO-DO ------------------------
+        case REQUEST_UPDATE_TODO: {
+            return Object.assign({}, {
+                ...state,
+                isFetching: true,
+                error: undefined,
+            })
+        }
+        case RECEIVE_UPDATE_TODO: {
+            console.log('atejau i reduceri update ' + action.payload)
+            const newData = state.data.map((item) => item.id === action.payload.id ? action.payload : item);
+            return Object.assign({}, {
+                isFetching: false,
+                error: undefined,
+                data: newData
+            })
+        }
+        case RECEIVE_UPDATE_TODO_FAILURE: {
+            return Object.assign({}, {
+                ...state,
+                isFetching: false,
+                error: action.payload,
+            })
+        }
+
         default:
             return state;
     }
